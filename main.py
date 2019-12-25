@@ -17,13 +17,15 @@ if __name__ == '__main__':
     transition_counts = parser.get_transition_counts()
     emission_counts, corpus = parser.get_emission_counts()
 
-    print("transition_counts:", transition_counts)
-    print("\nemission_counts", emission_counts)
+    print("Transition_counts:", transition_counts)
+    print("\nEmission_counts:", emission_counts)
 
     print("\nCorpus:", corpus)
 
     hmm_builder = HMMBuilder(transition_counts, emission_counts)
     transition_probability = hmm_builder.build_transition_probability()
+    
+    print(transition_probability)
     # emission probabilities were calculated by smoothing manually in the Viterbi class.
 
     # total number of tags
@@ -37,7 +39,8 @@ if __name__ == '__main__':
                         emission_counts, tag_labels, corpus, alpha)
 
 
-    test_seq = "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDRNTFRHSVVVPYEPPEVGSDCTTIHYNYMCNSSCMGGMNRRPILTIITLEDSSGNLLGRNSFEVRVCACPGRDRRTEEENLRKKGEPHHELPPGSTKRALPNNTSSSPQPKKKPLDGEYFTLQIRGRERFEMFRELNEALELKDAQAGKEPGGSRAHSSHLKSKKGQSTSRHKKLMFKTEGPDSD"
+    # test_seq = "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDRNTFRHSVVVPYEPPEVGSDCTTIHYNYMCNSSCMGGMNRRPILTIITLEDSSGNLLGRNSFEVRVCACPGRDRRTEEENLRKKGEPHHELPPGSTKRALPNNTSSSPQPKKKPLDGEYFTLQIRGRERFEMFRELNEALELKDAQAGKEPGGSRAHSSHLKSKKGQSTSRHKKLMFKTEGPDSD"
 
+    test_seq = "MEEP"
     test_handler = TestHandler(viterbi)
     test_handler.test_individual_sequence(test_seq)

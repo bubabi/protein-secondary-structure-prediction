@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import string
 
 class Viterbi(object):
@@ -41,50 +42,38 @@ class Viterbi(object):
         tags = self.transition_probs.keys()
         alpha = self.alpha
 
+        print(sentence)
+
         for count, tag in enumerate(tags):
             if tag == "<s>": continue
 
-            if sentence[0] in self.corpus:
-                emission = (self.emission_counts.get(tag).get(sentence[0], 0)) / \
-                    (self.get_emission_tag_count(tag))
-
-            # if the current word is not in the corpus which means
-            # the word is unknown word, apply smoothing
-            else:
-                emission = (self.emission_counts[tag].get(sentence[0], 0) + alpha) / \
+            emission = (self.emission_counts[tag].get(sentence[0], 0) + alpha) / \
                     (self.get_emission_tag_count(tag) + 20)
 
             transition = self.transition_probs['<s>'].get(tag, 0)
-            path[count, 0] = transition * emission
+            path[count, 0] = math.log10(transition) + math.log10(emission)
             backpointers[count, 0] = 0
 
         for t in range(1, self.sentence_size):
             for count, tag in enumerate(tags):
                 if tag == "<s>": continue
 
-                if sentence[t] in self.corpus:
-                    emission = (self.emission_counts.get(tag).get(sentence[t], 0)) / \
-                        (self.get_emission_tag_count(tag))
-
-                # if the current word is not in the corpus which means
-                # the word is unknown word, apply smoothing
-                else:
-                    emission = (self.emission_counts[tag].get(sentence[t], 0) + alpha) / \
+                emission = (self.emission_counts[tag].get(sentence[t], 0) + alpha) / \
                     (self.get_emission_tag_count(tag) + 20)
 
-
-                # transition = self.get_smoothed_transition(qp, q)
-                # transition = self.transition_probs[qp].get(q, 0)
-
-                path[count, t] = np.max(
-                    [path[countp, t - 1] * self.transition_probs[tagp].get(tag, 0) * emission for countp, tagp in enumerate(tags)]
+                path[count, t] = np.min(
+                    [path[countp, t - 1] + math.log10(self.transition_probs[tagp].get(tag, 0)) + math.log10(emission) for countp, tagp in enumerate(tags)]
                 )
 
-                backpointers[count, t] = np.argmax(
-                    [path[countp, t - 1] * self.transition_probs[tagp].get(tag, 0) for countp, tagp in enumerate(tags)]
+                backpointers[count, t] = np.argmin(
+                    [path[countp, t - 1] + math.log10(self.transition_probs[tagp].get(tag, 0)) for countp, tagp in enumerate(tags)]
                 )
 
-        last_tag = np.argmax([path[tag, self.sentence_size - 1] for tag in range(len(tags))])
+                print(path[count, t])
+        
+        last_tag = np.argmin([path[tag, self.sentence_size - 1] for tag in range(len(tags))])
 
+        print(path)
+        print(backpointers)
         self.last_tag = last_tag
         self.backpointers = backpointers
