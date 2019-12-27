@@ -42,8 +42,6 @@ class Viterbi(object):
         tags = self.transition_probs.keys()
         alpha = self.alpha
 
-        print(sentence)
-
         for count, tag in enumerate(tags):
             if tag == "<s>": continue
 
@@ -51,7 +49,7 @@ class Viterbi(object):
                     (self.get_emission_tag_count(tag) + 20)
 
             transition = self.transition_probs['<s>'].get(tag, 0)
-            path[count, 0] = math.log10(transition) + math.log10(emission)
+            path[count, 0] = transition * emission
             backpointers[count, 0] = 0
 
         for t in range(1, self.sentence_size):
@@ -61,19 +59,15 @@ class Viterbi(object):
                 emission = (self.emission_counts[tag].get(sentence[t], 0) + alpha) / \
                     (self.get_emission_tag_count(tag) + 20)
 
-                path[count, t] = np.min(
-                    [path[countp, t - 1] + math.log10(self.transition_probs[tagp].get(tag, 0)) + math.log10(emission) for countp, tagp in enumerate(tags)]
+                path[count, t] = np.max(
+                    [path[countp, t - 1] * self.transition_probs[tagp].get(tag, 0) * emission for countp, tagp in enumerate(tags)]
                 )
 
-                backpointers[count, t] = np.argmin(
-                    [path[countp, t - 1] + math.log10(self.transition_probs[tagp].get(tag, 0)) for countp, tagp in enumerate(tags)]
+                backpointers[count, t] = np.argmax(
+                    [path[countp, t - 1] * self.transition_probs[tagp].get(tag, 0) for countp, tagp in enumerate(tags)]
                 )
 
-                print(path[count, t])
-        
-        last_tag = np.argmin([path[tag, self.sentence_size - 1] for tag in range(len(tags))])
+        last_tag = np.argmax([path[tag, self.sentence_size - 1] for tag in range(len(tags))])
 
-        print(path)
-        print(backpointers)
         self.last_tag = last_tag
         self.backpointers = backpointers

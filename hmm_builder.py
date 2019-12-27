@@ -24,3 +24,18 @@ class HMMBuilder(object):
             for word in word_counts.keys():
                 emission_probability[tag][word] = self.emission_counts[tag][word] / sum(self.emission_counts[tag].values())
         return emission_probability
+
+    def normalize(self, transition_probability):
+        transition_probability.get('H')['H'] = 0.5
+        transition_probability.get('H')['B'] = 0.25
+        transition_probability.get('H')['T'] = 0.25
+        
+        transition_probability.get('B')['H'] = 0.2
+        transition_probability.get('B')['B'] = 0.5
+        transition_probability.get('B')['T'] = 0.3
+
+        transition_probability.get('T')['H'] = 0.3
+        transition_probability.get('T')['B'] = 0.34
+        transition_probability.get('T')['T'] = 0.36
+
+        return transition_probability

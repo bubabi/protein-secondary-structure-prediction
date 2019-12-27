@@ -15,6 +15,8 @@ if __name__ == '__main__':
     parser.parse_data()
 
     transition_counts = parser.get_transition_counts()
+
+
     emission_counts, corpus = parser.get_emission_counts()
 
     print("Transition_counts:", transition_counts)
@@ -22,8 +24,11 @@ if __name__ == '__main__':
 
     print("\nCorpus:", corpus)
 
+
     hmm_builder = HMMBuilder(transition_counts, emission_counts)
     transition_probability = hmm_builder.build_transition_probability()
+
+    transition_probability = hmm_builder.normalize(transition_probability)
     
     print(transition_probability)
     # emission probabilities were calculated by smoothing manually in the Viterbi class.
@@ -41,6 +46,7 @@ if __name__ == '__main__':
 
     # test_seq = "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDRNTFRHSVVVPYEPPEVGSDCTTIHYNYMCNSSCMGGMNRRPILTIITLEDSSGNLLGRNSFEVRVCACPGRDRRTEEENLRKKGEPHHELPPGSTKRALPNNTSSSPQPKKKPLDGEYFTLQIRGRERFEMFRELNEALELKDAQAGKEPGGSRAHSSHLKSKKGQSTSRHKKLMFKTEGPDSD"
 
-    test_seq = "MEEP"
     test_handler = TestHandler(viterbi)
-    test_handler.test_individual_sequence(test_seq)
+    test_handler.kmer("MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDRNTFRHSVVVPYEPPEVGSDCTTIHYNYMCNSSCMGGMNRRPILTIITLEDSSGNLLGRNSFEVRVCACPGRDRRTEEENLRKKGEPHHELPPGSTKRALPNNTSSSPQPKKKPLDGEYFTLQIRGRERFEMFRELNEALELKDAQAGKEPGGSRAHSSHLKSKKGQSTSRHKKLMFKTEGPDSD")
+        
+    # test_handler.kmer("MEEPQSD")
